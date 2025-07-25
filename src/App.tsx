@@ -25,7 +25,6 @@ function App() {
             <Router>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/marketplace" element={<Marketplace />} />
                     <Route path="/login" element={<RoleSelectorPage mode="login" />} />
                     <Route path="/register" element={<RoleSelectorPage mode="register" />} />
 
