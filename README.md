@@ -179,7 +179,8 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## 👨‍💻 Author
 
-**Nur Muhammad 'Ainul Yaqin** ([@masnurrm](https://github.com/masnurrm))
+**Melissa Lau** ([@melissalau17](https://github.com/melissalau17))
+**Haidar Ihza** ([@](https://github.com/))
 
 ## 🙏 Acknowledgments
 
