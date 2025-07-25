@@ -16,6 +16,7 @@ interface Project {
 export default function Marketplace({ role = "BUMDES" }: { role?: Role }) {
   const [activeTab, setActiveTab] = useState<"oneTime" | "contract">("oneTime")
   const [projects, setProjects] = useState<Project[]>([])
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([])
   const [showModal, setShowModal] = useState(false)
   const [form, setForm] = useState({
     name: "",
@@ -35,7 +36,16 @@ export default function Marketplace({ role = "BUMDES" }: { role?: Role }) {
   }
 
   fetchMarketplaceItems()
-}, [])
+  }, [])
+
+  useEffect(() => {
+    // Filter projects based on active tab
+    if (projects.length > 0) {
+      setFilteredProjects(
+        projects.filter((project) => project.type === activeTab)
+      )
+    }
+  }, [projects, activeTab])
 
   const handleAddProject = async () => {
     const payload = {
@@ -52,8 +62,6 @@ export default function Marketplace({ role = "BUMDES" }: { role?: Role }) {
       console.error("Failed to create project:", err)
     }
   }
-
-  const filteredProjects = projects.filter((p) => p.type === activeTab)
 
   return (
     <div className="flex flex-col gap-4 h-full p-6">

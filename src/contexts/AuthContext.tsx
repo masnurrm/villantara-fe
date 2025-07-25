@@ -13,7 +13,8 @@ type AuthContextType = {
     user: User | null;
     setUser: (user: User | null) => void;
     isAuthenticated: boolean;
-    login: (user: any) => void;
+    setIsAuthenticated: (value: boolean) => void;
+    login: (user: User) => void;
     logout: () => void;
     loading: boolean;
 };
@@ -22,40 +23,71 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const login = (userData: any) => {
+    const login = (userData: User) => {
         setUser(userData);
+        setIsAuthenticated(true);
         localStorage.setItem("user", JSON.stringify(userData));
     };
 
     const logout = () => {
         setUser(null);
+        setIsAuthenticated(false);
         localStorage.removeItem("user");
     };
-    
-    const isAuthenticated = !!user;
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const initializeAuth = async () => {
             try {
+                // First check localStorage for existing user data
+                const storedUser = localStorage.getItem("user");
+                if (storedUser) {
+                    const parsedUser = JSON.parse(storedUser);
+                    setUser(parsedUser);
+                    setIsAuthenticated(true);
+                }
+
+                // Then verify with server
                 const res = await axios.get("/auth/me", { withCredentials: true });
-                setUser(res.data);
-                isAuthenticated(true);
-            } catch {
+                if (res.data) {
+                    setUser(res.data);
+                    setIsAuthenticated(true);
+                    // Update localStorage with fresh data
+                    localStorage.setItem("user", JSON.stringify(res.data));
+                } else {
+                    // Server says no user, clear local state
+                    setUser(null);
+                    setIsAuthenticated(false);
+                    localStorage.removeItem("user");
+                }
+            } catch (error) {
+                // Server error or no valid session
                 setUser(null);
-                isAuthenticated(false);
+                setIsAuthenticated(false);
+                localStorage.removeItem("user");
+                console.error("Failed to initialize auth:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchUser();
+        initializeAuth();
     }, []);
 
-
     return (
-        <AuthContext.Provider value={{ user, setUser, isAuthenticated, login, logout, loading }}>
+        <AuthContext.Provider 
+            value={{ 
+                user, 
+                setUser, 
+                isAuthenticated, 
+                setIsAuthenticated, 
+                login, 
+                logout, 
+                loading 
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

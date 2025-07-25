@@ -1,15 +1,11 @@
 // components/Dashboard.jsx
 import { Card, CardContent } from "@/components/ui/card"
-import Sidebar from "@/constant/sidebar"
 import { BadgeCheck } from "lucide-react"
 import { ChevronRight } from "lucide-react" 
-
 
 export default function Dashboard() {
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-
       {/* Main Content */}
       <main className="flex-1 p-8">
         {/* Top Bar */}

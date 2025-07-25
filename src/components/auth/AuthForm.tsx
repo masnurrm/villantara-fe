@@ -27,7 +27,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const { login: loginContext } = useAuth();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,9 +48,8 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
                 };
 
             const res = await axios.post(`${API_URL}/users${endpoint}`, payload);
-
-            const { user } = res.data;
-            loginContext(user);
+            const user = res.data.data;
+            login(user);
             toast.success(isLogin ? "Login berhasil!" : "Registrasi berhasil!");
             navigate("/");
         } catch (err: any) {
